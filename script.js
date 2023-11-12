@@ -48,10 +48,6 @@ window.onload = function () {
             pieceContext.drawImage(rasterMap, x, y, 150, 100, 0, 0, 150, 100);
             pieceCanvas.classList.add("puzzle-piece");
             pieceCanvas.draggable = true;
-            //let targetDiv = document.createElement("div");
-            //targetDiv.classList.add("puzzle-target");
-            //targetDiv.dataset.targetId = i;
-            //puzzleArea.appendChild(targetDiv);
 
             document.getElementById("puzzlePieces").appendChild(pieceCanvas);
         }
@@ -101,7 +97,6 @@ window.onload = function () {
         });
 
         if (completed) {
-            //alert("Puzzle Completed!");
             console.log("Układanka ułożona!");
             if (!window.Notification) {
                 console.log('Browser does not support notifications.');
