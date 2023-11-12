@@ -51,6 +51,7 @@
     <div id="puzzlePieces"></div>
 
     <script>
+        
         let map = L.map('map').setView([53.430127, 14.564802], 13);
         L.tileLayer.provider('Esri.WorldImagery').addTo(map);
 
@@ -92,7 +93,6 @@
                 pieceContext.drawImage(rasterMap, x, y, 150, 100, 0, 0, 150, 100);
                 pieceCanvas.classList.add("puzzle-piece");
                 pieceCanvas.draggable = true;
-
                 let targetDiv = document.createElement("div");
                 targetDiv.classList.add("puzzle-target");
                 targetDiv.dataset.targetId = i;
@@ -100,10 +100,8 @@
 
                 document.getElementById("puzzlePieces").appendChild(pieceCanvas);
             }
-
             setupDragAndDrop();
         }
-
         function setupDragAndDrop() {
             let pieces = document.querySelectorAll('.puzzle-piece');
             pieces.forEach(piece => {
@@ -115,6 +113,10 @@
                 target.addEventListener('dragover', dragOver);
                 target.addEventListener('drop', drop);
             });
+            let puzzlePieces = document.querySelector("#puzzlePieces");
+            for (var i = puzzlePieces.children.length; i >= 0; i--) {
+                puzzlePieces.appendChild(puzzlePieces.children[Math.random() * i | 0]);
+            }
         }
 
         function dragStart(event) {
@@ -129,11 +131,11 @@
             event.preventDefault();
             let pieceId = event.dataTransfer.getData("text/plain");
             let piece = document.getElementById(pieceId);
-            if (event.target.dataset.targetId === pieceId.replace('piece', '')) {
+            //if (event.target.dataset.targetId === pieceId.replace('piece', '')) {
                 event.target.appendChild(piece);
                 piece.style.border = "1px solid green";
                 checkCompletion();
-            }
+            //}
         }
 
         function checkCompletion() {
@@ -146,7 +148,27 @@
             });
 
             if (completed) {
-                alert("Puzzle Completed!");
+                //alert("Puzzle Completed!");
+                if (!window.Notification) {
+                    console.log('Browser does not support notifications.');
+                } else {
+                    // sprawdzenie czy jest pozwolenie na powiadomienia
+                    if (Notification.permission === 'granted') {
+                        var notify = new Notification('Puzzle Completed');
+                    } else {
+                        // prośba o uprawnienia
+                        Notification.requestPermission().then(function(p) {
+                        if(p === 'granted') {
+                            var notify = new Notification('Puzzle Completed');
+                        } else {
+                            console.log('User blocked notifications.');
+                        }
+                        }).catch(function(err) {
+                            console.error(err);
+                        });
+                    }
+                }
+                
             }
         }
     </script>
