@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Maps with Leaflet</title>
+    <title>Map with puzzles</title>
     <link rel="stylesheet" href="leaflet-1.7.1/leaflet.css" />
     <script src="leaflet-1.7.1/leaflet-src.js"></script>
     <script src="leaflet-1.7.1/leaflet-providers.js"></script>
     <script src="leaflet-1.7.1/leaflet-image.js"></script>
-
-    <style>
+    <link rel="stylesheet" href="styles.css" />
+    
+    <!-- <style>
         #map {
-            width: 600px;
-            height: 400px;
+            width: 608px;
+            height: 408px;
             border: 1px solid black;
         }
         #rasterMap {
@@ -31,41 +32,75 @@
             position: relative;
         }
         #puzzleArea {
-            max-width: 610px;
-            /* height: 400px; */
+            display: block;
+            min-width: 608px;
+            width: 608px;
+            height: 408px;
             border: 1px solid blue;
-            margin-top: 20px;
+            float: right;
         }
         #puzzlePieces {
+            width: 100%;
+            position: relative;
             margin-top: 20px;
+            display: inline-block;
+            float: none;
         }
-    </style>
+    </style>-->
 </head>
 <body>
+    <div style="display: flex; float: left; justify-content: space-evenly; width: 100%;">
+    <div style="display: inline-block;">
     <div id="map"></div>
-    <button id="getLocation">Get Current Location</button>
-    <button id="saveButton">Save Raster Map</button>
+    <button id="getLocation">Moja lokalizacja</button>
+    <button id="saveButton">Pobierz mapę</button>
     <canvas id="rasterMap" width="600" height="400"></canvas>
+    </div>
+    <div id="puzzleArea">
+        <div class="puzzle-target" data-target-id="0"></div>
+        <div class="puzzle-target" data-target-id="1"></div>
+        <div class="puzzle-target" data-target-id="2"></div>
+        <div class="puzzle-target" data-target-id="3"></div>
+        <div class="puzzle-target" data-target-id="4"></div>
+        <div class="puzzle-target" data-target-id="5"></div>
+        <div class="puzzle-target" data-target-id="6"></div>
+        <div class="puzzle-target" data-target-id="7"></div>
+        <div class="puzzle-target" data-target-id="8"></div>
+        <div class="puzzle-target" data-target-id="9"></div>
+        <div class="puzzle-target" data-target-id="10"></div>
+        <div class="puzzle-target" data-target-id="11"></div>
+        <div class="puzzle-target" data-target-id="12"></div>
+        <div class="puzzle-target" data-target-id="13"></div>
+        <div class="puzzle-target" data-target-id="14"></div>
+        <div class="puzzle-target" data-target-id="15"></div>
+    </div>
+    </div>
+    <div id="puzzlePieces" draggable="true"></div>
 
-    <div id="puzzleArea"></div>
-    <div id="puzzlePieces"></div>
-
-    <script>
+    <!-- <script>
         
-        let map = L.map('map').setView([53.430127, 14.564802], 13);
+        let map = L.map('map').setView([53.430127, 14.564802], 13); // 13 to poziom zoomu
         L.tileLayer.provider('Esri.WorldImagery').addTo(map);
 
         document.getElementById("getLocation").addEventListener("click", function(event) {
-            if (!navigator.geolocation) {
-                console.log("No geolocation.");
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(position => {
-                let lat = position.coords.latitude;
-                let lon = position.coords.longitude;
-                map.setView([lat, lon]);
-            }, console.error);
-        });
+    if (!navigator.geolocation) {
+        console.log("No geolocation.");
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(position => {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+
+        // Ustawianie widoku mapy na aktualną lokalizację
+        map.setView([lat, lon], 16);
+
+        // Tworzenie pinezki i dodawanie jej do mapy
+        L.marker([lat, lon]).addTo(map)
+         .bindPopup('Tutaj jestem!') // Etykieta
+         .openPopup();
+    }, console.error);
+});
+
 
         document.getElementById("saveButton").addEventListener("click", function() {
             leafletImage(map, function (err, canvas) {
@@ -93,10 +128,10 @@
                 pieceContext.drawImage(rasterMap, x, y, 150, 100, 0, 0, 150, 100);
                 pieceCanvas.classList.add("puzzle-piece");
                 pieceCanvas.draggable = true;
-                let targetDiv = document.createElement("div");
-                targetDiv.classList.add("puzzle-target");
-                targetDiv.dataset.targetId = i;
-                puzzleArea.appendChild(targetDiv);
+                //let targetDiv = document.createElement("div");
+                //targetDiv.classList.add("puzzle-target");
+                //targetDiv.dataset.targetId = i;
+                //puzzleArea.appendChild(targetDiv);
 
                 document.getElementById("puzzlePieces").appendChild(pieceCanvas);
             }
@@ -120,7 +155,7 @@
         }
 
         function dragStart(event) {
-            event.dataTransfer.setData("text/plain", event.target.id);
+            event.dataTransfer.setData("text/plain", this.id);
         }
 
         function dragOver(event) {
@@ -131,11 +166,9 @@
             event.preventDefault();
             let pieceId = event.dataTransfer.getData("text/plain");
             let piece = document.getElementById(pieceId);
-            //if (event.target.dataset.targetId === pieceId.replace('piece', '')) {
-                event.target.appendChild(piece);
-                piece.style.border = "1px solid green";
-                checkCompletion();
-            //}
+            this.appendChild(piece);
+            piece.style.border = "1px solid green";
+            checkCompletion();
         }
 
         function checkCompletion() {
@@ -152,11 +185,11 @@
                 if (!window.Notification) {
                     console.log('Browser does not support notifications.');
                 } else {
-                    // sprawdzenie czy jest pozwolenie na powiadomienia
+                    // Sprawdzenie czy jest pozwolenie na powiadomienia
                     if (Notification.permission === 'granted') {
                         var notify = new Notification('Puzzle Completed');
                     } else {
-                        // prośba o uprawnienia
+                        // Prośba o uprawnienia
                         Notification.requestPermission().then(function(p) {
                         if(p === 'granted') {
                             var notify = new Notification('Puzzle Completed');
@@ -168,9 +201,9 @@
                         });
                     }
                 }
-                
             }
-        }
-    </script>
+        } 
+    </script> -->
+    <script src="script.js"></script>
 </body>
 </html>

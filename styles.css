@@ -1,0 +1,36 @@
+#map {
+    width: 608px;
+    height: 408px;
+    border: 1px solid black;
+}
+#rasterMap {
+    display: none;
+}
+.puzzle-piece {
+    width: 150px;
+    height: 100px;
+    border: 1px solid red;
+    float: left;
+}
+.puzzle-target {
+    width: 150px;
+    height: 100px;
+    border: 1px solid green;
+    float: left;
+    position: relative;
+}
+#puzzleArea {
+    display: block;
+    min-width: 608px;
+    width: 608px;
+    height: 408px;
+    border: 1px solid blue;
+    float: right;
+}
+#puzzlePieces {
+    width: 100%;
+    position: relative;
+    margin-top: 20px;
+    display: inline-block;
+    float: none;
+}
